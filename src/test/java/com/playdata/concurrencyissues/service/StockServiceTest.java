@@ -1,6 +1,7 @@
 package com.playdata.concurrencyissues.service;
 
 import com.playdata.concurrencyissues.entity.Stock;
+import com.playdata.concurrencyissues.facade.OptimisticLockFacade;
 import com.playdata.concurrencyissues.repository.StockRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class StockServiceTest {
 
     @Autowired
+    private OptimisticLockFacade optimisticLockFacade;
+//    private OptimisticLockStockService stockService;
 //    private StockService stockService;
-    private PessimisticLockStockService stockService;
+//    private PessimisticLockStockService stockService;
 
     @Autowired
     private StockRepository stockRepository;
@@ -41,7 +44,7 @@ class StockServiceTest {
     @DisplayName("완전 평범한 재고 감소 로직")
     void simpleDecreaseTest() {
 
-        stockService.decrease(1L, 1L);
+//        stockService.decrease(1L, 1L);
 
         Stock stock = stockRepository.findById(1L).orElseThrow();
         assertEquals(99L, stock.getQuantity());
@@ -63,7 +66,9 @@ class StockServiceTest {
             executorService.submit(() -> {
                 try {
                     // 각 스레드마다 재고 감소 메서드 호출
-                    stockService.decrease(1L, 1L);
+                    optimisticLockFacade.decrease(1L, 1L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 } finally {
                     // 카운트다운 1개 감소
                     latch.countDown();
