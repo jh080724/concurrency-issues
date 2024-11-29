@@ -3,6 +3,7 @@ package com.playdata.concurrencyissues.service;
 import com.playdata.concurrencyissues.entity.Stock;
 import com.playdata.concurrencyissues.facade.LettuceLockFacade;
 import com.playdata.concurrencyissues.facade.OptimisticLockFacade;
+import com.playdata.concurrencyissues.facade.RedissonLockFacade;
 import com.playdata.concurrencyissues.repository.StockRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class StockServiceTest {
 
     @Autowired
-    private LettuceLockFacade lettuceLockFacade;
+    private RedissonLockFacade redissonLockFacade;
+//    private LettuceLockFacade lettuceLockFacade;
 //    private OptimisticLockFacade optimisticLockFacade;
 //    private OptimisticLockStockService stockService;
 //    private StockService stockService;
@@ -68,7 +70,7 @@ class StockServiceTest {
             executorService.submit(() -> {
                 try {
                     // 각 스레드마다 재고 감소 메서드 호출
-                    lettuceLockFacade.decrease(1L, 1L);
+                    redissonLockFacade.decrease(1L, 1L);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {
