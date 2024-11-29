@@ -20,14 +20,14 @@ public class Stock {
     private Long productId;
     private Long quantity;
 
-    @Version
-    private Long version; // 낙관적 Lock을 위한 버정 정보
-
-    public Stock(Long quantity, Long productId, Long id) {
-        this.id = id;
-        this.productId = productId;
-        this.quantity = quantity;
-    }
+//    @Version
+//    private Long version; // 낙관적 Lock을 위한 버정 정보
+//
+//    public Stock(Long quantity, Long productId, Long id) {
+//        this.id = id;
+//        this.productId = productId;
+//        this.quantity = quantity;
+//    }
 
     public void decrease(Long quantity) {
         if(this.quantity - quantity < 0) {
